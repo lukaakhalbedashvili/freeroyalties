@@ -1,113 +1,166 @@
-import Image from "next/image";
+"use client";
+import Choice from "@/components/Choice";
+import { Button } from "@/components/ui/button";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+
+const selectOptions = [
+  { label: "dollar", value: "dollar" },
+  {
+    label: "number",
+    value: "number",
+  },
+  {
+    label: "string",
+    value: "string",
+  },
+  {
+    label: "boolean",
+    value: "boolean",
+  },
+];
+
+type FormData = {
+  title: string;
+  question: string;
+  choice1Text: string;
+  choice2Text: string;
+  choice1Type: string;
+  choice2Type: string;
+};
+
+const validationSchema = Yup.object({
+  title: Yup.string().required("required"),
+  question: Yup.string().required("required"),
+  choice1Text: Yup.string().required("required"),
+  choice2Text: Yup.string().required("required"),
+  choice1Type: Yup.string()
+    .oneOf(["dollar", "number", "string", "boolean"])
+    .required("required"),
+  choice2Type: Yup.string()
+    .oneOf(["dollar", "number", "string", "boolean"])
+    .required("required"),
+});
 
 export default function Home() {
+  const [formData, setFormData] = useState<FormData>();
+
+  const {
+    values,
+    handleChange,
+    setFieldValue,
+    touched,
+    errors,
+    handleBlur,
+    isValid,
+    submitForm,
+    dirty,
+  } = useFormik({
+    initialValues: {
+      title: "",
+      question: "",
+      choice1Text: "",
+      choice2Text: "",
+      choice1Type: "",
+      choice2Type: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+      setFormData(values);
+    },
+  });
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <Dialog defaultOpen>
+        <DialogTrigger asChild>
+          <Button variant="outline">Edit Profile</Button>
+        </DialogTrigger>
+
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit profile</DialogTitle>
+
+            <DialogDescription>
+              Make changes to your profile here. Click save when youre done.
+            </DialogDescription>
+          </DialogHeader>
+
+          <Input
+            label="title"
+            id="title"
+            onChange={handleChange}
+            value={values.title}
+            name="title"
+            errorMessage={touched.title && errors.title}
+            onBlur={handleBlur}
+            className="mt-7 mb-5"
+          />
+
+          <Button
+            onClick={() =>
+              !errors.title && setFieldValue("question", values.title)
+            }
+            className="w-full"
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+            add question
+          </Button>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+          {values.question && (
+            <>
+              <Choice
+                selectOptions={selectOptions}
+                txtInputId="text1"
+                txtInputLabel="text1"
+                selectValue={values.choice1Type}
+                txtValue={values.choice1Text}
+                txtOnChange={handleChange}
+                txtOnBlur={handleBlur}
+                txtErrorMessage={touched.choice1Text && errors.choice1Text}
+                selectOnChange={(value) => setFieldValue("choice1Type", value)}
+                txtInputName="choice1Text"
+                selectInputName="choice1Type"
+                className="mt-7"
+              />
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+              <Choice
+                txtInputName="choice2Text"
+                selectInputName="choice2Type"
+                selectOptions={selectOptions}
+                txtInputId="choice2"
+                txtInputLabel="choice2"
+                className="h-fit mt-7 mb-7"
+                selectValue={values.choice2Type}
+                txtValue={values.choice2Text}
+                txtOnChange={handleChange}
+                txtOnBlur={handleBlur}
+                txtErrorMessage={touched.choice2Text && errors.choice2Text}
+                selectOnChange={(value) => setFieldValue("choice2Type", value)}
+              />
+            </>
+          )}
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+          <DialogFooter>
+            {isValid && dirty && (
+              <Button className="w-full" onClick={submitForm}>
+                save
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
