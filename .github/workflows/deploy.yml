@@ -1,0 +1,28 @@
+name: Deploy to DigitalOcean Droplet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.10.1
+        with:
+          ssh-private-key: ${{ secrets.Florida }}
+
+      - name: Deploy application via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no root@159.65.220.12 << 'EOF'
+            cd /root/apps/freeroyalties
+            git pull origin main
+            docker-compose down
+            docker-compose up -d --build
+          EOF

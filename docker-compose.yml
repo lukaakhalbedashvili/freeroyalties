@@ -1,0 +1,19 @@
+version: "0.0.1"
+
+services:
+  app:
+    image: lukaakhalbeda/freeroyal:latest # Replace with your Docker image name
+    build:
+      context: . # Build from the current directory
+      dockerfile: Dockerfile # Specify the Dockerfile if it's not named 'Dockerfile'
+    ports:
+      - "3000:3000" # Expose port 3000 for your app
+    environment:
+      - NODE_ENV=production # Set environment variables
+    volumes:
+      - .:/app # Mount the current directory to /app in the container (optional, for local development)
+    command: npm start # Command to run your app
+
+networks:
+  default:
+    driver: bridge # Use the default bridge network
