@@ -26,6 +26,6 @@ jobs:
           ssh root@159.65.220.12 << 'EOF'
             cd /root/apps/freeroyalties
             git pull origin main
-            docker-compose down
-            docker-compose up -d --build
+            docker compose down
+            docker compose up -d --build
           EOF
