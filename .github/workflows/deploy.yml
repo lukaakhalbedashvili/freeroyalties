@@ -18,9 +18,12 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.FLORIDA }}
 
+      - name: Add DigitalOcean host key to known hosts
+        run: ssh-keyscan -H 159.65.220.12 >> ~/.ssh/known_hosts
+
       - name: Deploy application via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no root@159.65.220.12 << 'EOF'
+          ssh root@159.65.220.12 << 'EOF'
             cd /root/apps/freeroyalties
             git pull origin main
             docker-compose down
