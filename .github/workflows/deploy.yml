@@ -15,11 +15,8 @@ jobs:
 
       - name: Set up SSH agent
         uses: webfactory/ssh-agent@v0.9.0
-        # with:
-        #   ssh-private-key: ${{ secrets.FLORIDA }}
-
-      - name: Add SSH key
-        run: echo "${{ secrets.FLORIDA }}" | tr -d '\r' | ssh-add - > /dev/null
+        with:
+          ssh-private-key: ${{ secrets.FLORIDA }}
 
       - name: Deploy application via SSH
         run: |
